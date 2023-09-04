@@ -9,6 +9,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.kruchy.mypharma.R
 import com.kruchy.mypharma.databinding.ActivityMainBinding
 import com.mypharma.registry.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
