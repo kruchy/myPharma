@@ -1,10 +1,10 @@
-package com.mypharma.medicine
+package com.mypharma.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable
 
-@DatabaseTable(tableName = "medications")
+@DatabaseTable(tableName = "drugs")
 data class Drug (
     @field:JsonProperty("Identyfikator Produktu Leczniczego")
     @DatabaseField(id = true)

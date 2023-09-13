@@ -3,6 +3,7 @@ package com.mypharma
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -11,8 +12,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kruchy.mypharma.R
 import com.kruchy.mypharma.databinding.ActivityMainBinding
-import com.mypharma.registry.DatabaseHelper
+import com.mypharma.database.DatabaseHelper
+import com.mypharma.ui.notifications.CalendarFragment
 import com.mypharma.ui.reminder.AddReminderBottomSheet
+import com.mypharma.ui.reminder.RemindersFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -65,12 +68,23 @@ class MainActivity : AppCompatActivity() {
                     bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                     true
                 }
-
+                R.id.navigation_reminders ->{
+                    replaceFragment(RemindersFragment())
+                    true
+                }
+                R.id.navigation_calendar -> {
+                    replaceFragment(CalendarFragment())
+                    true
+                }
                 else -> false
             }
         }
     }
-
+    private fun replaceFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
+        transaction.commit()
+    }
     private fun checkDatabaseExists(): Boolean {
         val dbFile = applicationContext.getDatabasePath(DatabaseHelper.DATABASE_NAME)
         return dbFile.exists()
