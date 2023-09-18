@@ -20,8 +20,8 @@ class DatabaseHelper(
 
     ) : OrmLiteSqliteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), IDatabaseHelper {
 
-    private var drugDao: Dao<Drug, Long>? = null
-    private var reminderDao: Dao<Reminder, Long>? = null
+    private val mDrugDao: Dao<Drug, Long> by lazy { getDao(Drug::class.java) }
+    private val mReminderDao: Dao<Reminder, Long> by lazy { getDao(Reminder::class.java) }
 
     companion object {
         internal const val DATABASE_NAME = "medications.db"
@@ -70,8 +70,7 @@ class DatabaseHelper(
 
             .readValues<Drug>(inputStream)
             .readAll()
-            .map { getDrugDao()!!.create(it) }
-        getDrugDao()!!.count();
+            .forEach { mDrugDao.create(it) }
 
     }
 
@@ -90,28 +89,8 @@ class DatabaseHelper(
         }
     }
 
-    @Throws(SQLException::class)
-    override fun getDrugDao(): Dao<Drug, Long>? {
-        if (drugDao == null) {
-            try {
-                drugDao = getDao(Drug::class.java)
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            }
-        }
-        return drugDao
-    }
+    override fun getDrugDao(): Dao<Drug, Long> = mDrugDao
 
-    @Throws(SQLException::class)
-    override fun getReminderDao(): Dao<Reminder, Long>? {
-        if (reminderDao == null) {
-            try {
-                reminderDao = getDao(Reminder::class.java)
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            }
-        }
-        return reminderDao
-    }
+    override fun getReminderDao(): Dao<Reminder, Long> = mReminderDao
 
 }

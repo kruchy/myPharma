@@ -22,7 +22,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: IDatabaseHelper
     private lateinit var binding: ActivityMainBinding
-    private val TAG = MainActivity::class.java.simpleName
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        with(binding.navView) {
+        binding.navView.apply {
             val navController = findNavController(R.id.nav_host_fragment_activity_main)
             val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_reminders))
             setupActionBarWithNavController(navController, appBarConfiguration)
@@ -39,11 +41,7 @@ class MainActivity : AppCompatActivity() {
             setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_add_reminders -> {
-                        val bottomSheet = AddReminderBottomSheet(
-                            getDatabaseHelper().getDrugDao()!!.queryForAll().map {
-                                DrugView(it.id ,it.popularName, it.entityResponsible, it.substance)
-                            }
-                        )
+                        val bottomSheet = AddReminderBottomSheet()
                         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                         true
                     }
@@ -76,8 +74,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
-        transaction.commit()
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.nav_host_fragment_activity_main, fragment)
+            setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            commit()
+        }
     }
 }

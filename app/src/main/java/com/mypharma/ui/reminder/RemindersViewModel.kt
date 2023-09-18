@@ -1,42 +1,36 @@
 package com.mypharma.ui.reminder
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.j256.ormlite.dao.Dao
-import com.mypharma.model.Drug
 import com.mypharma.model.Reminder
+import kotlinx.coroutines.launch
 
 class RemindersViewModel(private val reminderDao: Dao<Reminder, Long>) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "Drugs"
-    }
-    val text: LiveData<String> = _text
-
     private val _reminders = MutableLiveData<List<Reminder>>()
+    val reminders: LiveData<List<Reminder>> = _reminders
 
     init {
-        _reminders.value = getAllReminders()
+        fetchAllReminders()
     }
 
-    val reminders: LiveData<List<Reminder>> get() = _reminders
+    private fun fetchAllReminders() = viewModelScope.launch {
+        _reminders.postValue(getAllReminders())
+    }
 
-    fun getReminderById(id: Long): Reminder? {
+    suspend fun getReminderById(id: Long): Reminder? {
         return reminderDao.queryForId(id)
     }
 
-    fun getAllReminders(): MutableList<Reminder> {
-        val remindersList = reminderDao.queryForAll()
-        Log.d("RemindersViewModel", "Fetched reminders: $remindersList")
-        return remindersList
+    private suspend fun getAllReminders(): MutableList<Reminder> {
+        return reminderDao.queryForAll()
     }
 
-    fun addReminder(reminder: Reminder) {
+    fun addReminder(reminder: Reminder) = viewModelScope.launch {
         reminderDao.create(reminder)
-        _reminders.value = getAllReminders()
+        _reminders.postValue(getAllReminders())
     }
 }
-
-
