@@ -11,35 +11,43 @@ import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.TableUtils
 import com.mypharma.model.Drug
 import com.mypharma.model.Reminder
-import java.io.InputStream
 import java.sql.SQLException
 
 
 class DatabaseHelper(
-    context: Context,
-    val inputStream: InputStream
-) : OrmLiteSqliteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    private val context: Context,
+    private val csvFileName: String = "Registry.csv",
 
-    private var drugDao:  Dao<Drug, Long>? = null
-    private var reminderDao:  Dao<Reminder, Long>? = null
+    ) : OrmLiteSqliteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), IDatabaseHelper {
 
+    private var drugDao: Dao<Drug, Long>? = null
+    private var reminderDao: Dao<Reminder, Long>? = null
 
     companion object {
         internal const val DATABASE_NAME = "medications.db"
         private const val DATABASE_VERSION = 1
     }
 
+    private fun checkDatabaseExists(): Boolean {
+        val dbFile = context.getDatabasePath(DATABASE_NAME)
+        return dbFile.exists()
+    }
+
     override fun onCreate(db: SQLiteDatabase, connectionSource: ConnectionSource) {
-        try {
-            TableUtils.createTable(connectionSource, Drug::class.java)
-            TableUtils.createTable(connectionSource, Reminder::class.java)
-            loadCSVtoDatabase()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (checkDatabaseExists()) {
+            try {
+                TableUtils.createTableIfNotExists(connectionSource, Drug::class.java)
+                TableUtils.createTableIfNotExists(connectionSource, Reminder::class.java)
+                loadCSVtoDatabase()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     private fun loadCSVtoDatabase() {
+        val inputStream = context.assets.open(csvFileName)
+
         val csvMapper = CsvMapper().apply {
             enable(CsvParser.Feature.TRIM_SPACES)
             enable(CsvParser.Feature.SKIP_EMPTY_LINES)
@@ -59,10 +67,11 @@ class DatabaseHelper(
 
         csvMapper.readerFor(Drug::class.java)
             .with(schema.withSkipFirstDataRow(true))
+
             .readValues<Drug>(inputStream)
             .readAll()
             .map { getDrugDao()!!.create(it) }
-
+        getDrugDao()!!.count();
 
     }
 
@@ -73,7 +82,8 @@ class DatabaseHelper(
         newVersion: Int
     ) {
         try {
-            TableUtils.dropTable<Drug, Int>(connectionSource, Drug::class.java, false)
+            TableUtils.dropTable<Drug, Long>(connectionSource, Drug::class.java, false)
+            TableUtils.dropTable<Reminder, Long>(connectionSource, Reminder::class.java, false)
             onCreate(db, connectionSource)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -81,7 +91,7 @@ class DatabaseHelper(
     }
 
     @Throws(SQLException::class)
-    fun getDrugDao():  Dao<Drug, Long>? {
+    override fun getDrugDao(): Dao<Drug, Long>? {
         if (drugDao == null) {
             try {
                 drugDao = getDao(Drug::class.java)
@@ -93,7 +103,7 @@ class DatabaseHelper(
     }
 
     @Throws(SQLException::class)
-    fun getReminderDao():  Dao<Reminder, Long>? {
+    override fun getReminderDao(): Dao<Reminder, Long>? {
         if (reminderDao == null) {
             try {
                 reminderDao = getDao(Reminder::class.java)

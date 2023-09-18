@@ -1,0 +1,33 @@
+Identyfikator Produktu Leczniczego,Nazwa Produktu Leczniczego,Nazwa powszechnie stosowana,Moc,Postać farmaceutyczna,Kod ATC,Podmiot odpowiedzialny,Opakowanie,Substancja czynna,Ulotka,Charakterystyka
+100000014,Zoledronic acid Fresenius Kabi,Acidum zoledronicum,4 mg/5 ml,Koncentrat do sporządzania roztworu do infuzji,M05BA08,Fresenius Kabi Polska Sp. z o.o.,"05909991023652 ¦ Rpz ¦ 2
+1 fiol. 5 ml
+05909991023669 ¦ Rpz ¦ 3
+4 fiol. 5 ml
+05909991023676 ¦ Rpz ¦ 4
+10 fiol. 5 ml",Acidum zoledronicum 4 mg/5 ml,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/1/leaflet,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/1/characteristic
+100000020,Edelan,Mometasoni furoas,1 mg/g,Krem,D07AC13,Zakłady Farmaceutyczne POLPHARMA S.A.,"05909991023690 ¦ Rp ¦ 6
+1 tuba 30 g
+05909991023683 ¦ Rp ¦ 5
+1 tuba 15 g",Mometasoni furoas 1 mg/g,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/2/leaflet,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/2/characteristic
+100000037,Nalgesin,Naproxenum natricum,275 mg,Tabletki powlekane,M01AE02,"Krka, d.d., Novo mesto","05909991066178 ¦ Rp ¦ 84656
+40 tabl.
+05909991023744 ¦ Rp ¦ 8
+10 tabl.
+05909991023751 ¦ Rp ¦ 9
+20 tabl.
+05909991023768 ¦ Rp ¦ 10
+30 tabl.
+05909991023775 ¦ Rp ¦ 11
+60 tabl.",Naproxenum natricum 275 mg,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/3/leaflet,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/3/characteristic
+100000043,Nalgesin Forte,Naproxenum natricum,550 mg,Tabletki powlekane,M01AE02,"Krka, d.d., Novo mesto","05909991023836 ¦ Rp ¦ 16
+60 tabl.
+05909991023782 ¦ Rp ¦ 12
+10 tabl.
+05909991023799 ¦ Rp ¦ 13
+20 tabl.
+05909991023805 ¦ Rp ¦ 14
+30 tabl.
+05909991066185 ¦ Rp ¦ 84657
+40 tabl.
+05909991023829 ¦ Rp ¦ 15
+50 tabl.",Naproxenum natricum 550 mg,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/4/leaflet,https://rejestrymedyczne.ezdrowie.gov.pl/api/rpl/medicinal-products/4/characteristic

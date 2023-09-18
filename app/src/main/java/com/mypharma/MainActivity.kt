@@ -1,92 +1,83 @@
 package com.mypharma
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kruchy.mypharma.R
 import com.kruchy.mypharma.databinding.ActivityMainBinding
 import com.mypharma.database.DatabaseHelper
+import com.mypharma.database.IDatabaseHelper
+import com.mypharma.model.DrugView
 import com.mypharma.ui.notifications.CalendarFragment
 import com.mypharma.ui.reminder.AddReminderBottomSheet
 import com.mypharma.ui.reminder.RemindersFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.mypharma.ui.reminder.RemindersViewModel
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var dbHelper: IDatabaseHelper
     private lateinit var binding: ActivityMainBinding
-    private lateinit var TAG: String
-
+    private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        TAG = this.localClassName;
+        dbHelper = DatabaseHelper(this@MainActivity)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
+        with(binding.navView) {
+            val navController = findNavController(R.id.nav_host_fragment_activity_main)
+            val appBarConfiguration = AppBarConfiguration(setOf(R.id.navigation_reminders))
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            setupWithNavController(navController)
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_reminders,
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-        val dbExists = checkDatabaseExists()
+            setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.navigation_add_reminders -> {
+                        val bottomSheet = AddReminderBottomSheet(
+                            getDatabaseHelper().getDrugDao()!!.queryForAll().map {
+                                DrugView(it.id ,it.popularName, it.entityResponsible, it.substance)
+                            }
+                        )
+                        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+                        true
+                    }
 
-        if (!dbExists) {
-            Log.d(TAG, "onCreate: Creating database")
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    val dbHelper = DatabaseHelper(
-                        this@MainActivity,
-                        this@MainActivity.assets.open("Registry.csv")
-                    )
-                    val db = dbHelper.writableDatabase
-                }
-                Log.d(TAG, "onCreate: Database created")
-            }
-        }
+                    R.id.navigation_reminders -> {
+                        replaceFragment(RemindersFragment())
+                        true
+                    }
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.nav_view)
-        bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_add_reminders -> {
-                    val bottomSheet = AddReminderBottomSheet()
-                    bottomSheet.show(supportFragmentManager, bottomSheet.tag)
-                    true
+                    R.id.navigation_calendar -> {
+                        replaceFragment(CalendarFragment())
+                        true
+                    }
+
+                    else -> false
                 }
-                R.id.navigation_reminders ->{
-                    replaceFragment(RemindersFragment())
-                    true
-                }
-                R.id.navigation_calendar -> {
-                    replaceFragment(CalendarFragment())
-                    true
-                }
-                else -> false
             }
         }
     }
+
+    fun setDatabaseHelper(helper: IDatabaseHelper) {
+        this.dbHelper = helper
+    }
+
+    fun getDatabaseHelper(): IDatabaseHelper {
+        if (!::dbHelper.isInitialized) {
+            dbHelper = DatabaseHelper(this@MainActivity)
+        }
+        return dbHelper
+    }
+
     private fun replaceFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.nav_host_fragment_activity_main, fragment)
         transaction.commit()
-    }
-    private fun checkDatabaseExists(): Boolean {
-        val dbFile = applicationContext.getDatabasePath(DatabaseHelper.DATABASE_NAME)
-        return dbFile.exists()
     }
 }

@@ -8,7 +8,7 @@ import com.j256.ormlite.table.DatabaseTable
 data class Drug (
     @field:JsonProperty("Identyfikator Produktu Leczniczego")
     @DatabaseField(id = true)
-    val id: Int,
+    val id: Long,
     @field:JsonProperty("Nazwa Produktu Leczniczego")
     @DatabaseField
     val name: String,
