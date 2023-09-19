@@ -14,7 +14,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kruchy.mypharma.R
 import com.mypharma.MainActivity
 import com.mypharma.model.DrugView
-import com.mypharma.database.DatabaseHelper
 import com.mypharma.model.Reminder
 import java.util.Calendar
 
@@ -53,7 +52,7 @@ class AddReminderBottomSheet() : BottomSheetDialogFragment() {
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.dropdown_multiline_item,
-            R.id.textContainer,
+            R.id.includedLineView,
             popularNames
         )
         autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->

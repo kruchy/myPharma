@@ -5,24 +5,32 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.kruchy.mypharma.R
 import com.kruchy.mypharma.databinding.FragmentRemindersBinding
 import com.mypharma.MainActivity
+import com.mypharma.model.Drug
+import com.mypharma.model.Reminder
+import com.mypharma.ui.DividerItemDecoration
+import java.time.Instant
+import java.util.Date
 
 class RemindersFragment : Fragment() {
 
     private var _binding: FragmentRemindersBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var viewModel: RemindersViewModel
 
+    private val viewModel: RemindersViewModel by viewModels {
+        val mainActivity = activity as MainActivity
+        val databaseHelper = mainActivity.getDatabaseHelper()
+        val reminderDao = databaseHelper.getReminderDao()!!
+        RemindersViewModelFactory(reminderDao)
+    }
 
+    private val remindersAdapter = RemindersAdapter(emptyList())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,26 +44,21 @@ class RemindersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val context = requireContext()
-        val mainActivity = activity as MainActivity
-        val databaseHelper = mainActivity.getDatabaseHelper()
-        val reminderDao = databaseHelper.getReminderDao()!!
-
-        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return RemindersViewModel(reminderDao) as T
-            }
-
-        })[RemindersViewModel::class.java]
-
-        val recyclerView: RecyclerView = binding.remindersRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val recyclerView = binding.remindersRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = remindersAdapter
+//        val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
+//        if (divider != null) {
+//            val itemDecoration = DividerItemDecoration(divider)
+//            recyclerView.addItemDecoration(itemDecoration)
+//        }
         viewModel.reminders.observe(viewLifecycleOwner) { reminders ->
             Log.d("RemindersFragment", "Received reminders: $reminders")
             val remindersAdapter = RemindersAdapter(reminders)
             recyclerView.adapter = remindersAdapter
             recyclerView.requestLayout()
         }
+
     }
 
     override fun onDestroyView() {
@@ -63,3 +66,4 @@ class RemindersFragment : Fragment() {
         _binding = null
     }
 }
+

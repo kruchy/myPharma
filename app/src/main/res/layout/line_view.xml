@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/textContainer"
+    android:background="@drawable/recycler_item_border"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     android:gravity="center_vertical"
     android:lines="3"
     android:padding="5dp"
-    android:textColor="#FFFFFF"
-    android:textSize="20sp" />
+    android:textColor="@color/black"
+    android:textSize="15sp" />
