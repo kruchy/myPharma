@@ -17,23 +17,20 @@ import com.mypharma.model.DrugView
 import com.mypharma.model.Reminder
 import java.util.Calendar
 
-class AddReminderBottomSheet() : BottomSheetDialogFragment() {
+class AddReminderBottomSheet(val popularNames: List<DrugView>) : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_add_reminder, container, false)
     }
-    private lateinit var popularNames: List<DrugView>
     private var selectedDrug: DrugView? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = requireContext() as MainActivity
         val databaseHelper = context.getDatabaseHelper()
-        popularNames = databaseHelper.getDrugDao()!!.queryForAll().map {
-            DrugView(it.id ,it.popularName, it.entityResponsible, it.substance)
-        }
+
         val reminderDao = databaseHelper.getReminderDao()!!
         val drugDao = databaseHelper.getDrugDao()!!
 
@@ -46,8 +43,6 @@ class AddReminderBottomSheet() : BottomSheetDialogFragment() {
         val autoCompleteTextView: AutoCompleteTextView =
             view.findViewById(R.id.autoCompleteTextView)
         autoCompleteTextView.threshold = 2
-        val datePicker: DatePicker = view.findViewById(R.id.datePicker)
-        val addButton: Button = view.findViewById(R.id.button)
 
         val adapter = ArrayAdapter(
             requireContext(),
@@ -58,10 +53,10 @@ class AddReminderBottomSheet() : BottomSheetDialogFragment() {
         autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
             selectedDrug = parent.adapter.getItem(position) as DrugView
         }
-
         autoCompleteTextView.setAdapter(adapter)
 
-
+        val datePicker: DatePicker = view.findViewById(R.id.datePicker)
+        val addButton: Button = view.findViewById(R.id.button)
         addButton.setOnClickListener {
             val date = Calendar.getInstance().apply {
                 set(datePicker.year, datePicker.month, datePicker.dayOfMonth)

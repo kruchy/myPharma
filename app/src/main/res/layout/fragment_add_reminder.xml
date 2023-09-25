@@ -11,6 +11,9 @@
         android:id="@+id/autoCompleteTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textColorLink="@color/black"
         android:hint="@string/enter_description"
         android:paddingTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,6 +25,7 @@
         android:id="@+id/datePicker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert"
         app:layout_constraintEnd_toEndOf="@id/autoCompleteTextView"
         app:layout_constraintStart_toStartOf="@id/autoCompleteTextView"
         app:layout_constraintTop_toBottomOf="@+id/autoCompleteTextView" />

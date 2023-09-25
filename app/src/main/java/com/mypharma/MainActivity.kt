@@ -3,7 +3,6 @@ package com.mypharma
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -16,7 +15,6 @@ import com.mypharma.model.DrugView
 import com.mypharma.ui.notifications.CalendarFragment
 import com.mypharma.ui.reminder.AddReminderBottomSheet
 import com.mypharma.ui.reminder.RemindersFragment
-import com.mypharma.ui.reminder.RemindersViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbHelper = DatabaseHelper(this@MainActivity)
+        var popularNames = dbHelper.getDrugDao()!!.queryForAll().map {
+            DrugView(it.id ,it.popularName, it.entityResponsible, it.substance)
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_add_reminders -> {
-                        val bottomSheet = AddReminderBottomSheet()
+                        val bottomSheet = AddReminderBottomSheet(popularNames)
                         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                         true
                     }

@@ -5,18 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kruchy.mypharma.R
 import com.kruchy.mypharma.databinding.FragmentRemindersBinding
 import com.mypharma.MainActivity
-import com.mypharma.model.Drug
-import com.mypharma.model.Reminder
-import com.mypharma.ui.DividerItemDecoration
-import java.time.Instant
-import java.util.Date
 
 class RemindersFragment : Fragment() {
 
