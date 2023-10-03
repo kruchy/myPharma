@@ -1,6 +1,5 @@
 package com.mypharma.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable
 import java.util.Date
@@ -11,7 +10,7 @@ data class Reminder(
     var id: Long? = 0,
     @DatabaseField
     var name: String? = null,
-    @DatabaseField(columnName = "drug_id", foreign = true)
+    @DatabaseField(columnName = "drug_id", foreign = true, foreignAutoRefresh = true)
     var drug: Drug? = null,
     @DatabaseField
     var date: Date? = null

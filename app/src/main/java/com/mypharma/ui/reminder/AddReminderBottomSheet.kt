@@ -8,52 +8,53 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.DatePicker
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kruchy.mypharma.R
 import com.mypharma.MainActivity
 import com.mypharma.model.DrugView
 import com.mypharma.model.Reminder
+import com.mypharma.ui.drug.PopularDrugsViewModel
+import com.mypharma.ui.drug.factory.PopularDrugsViewModelFactory
+import com.mypharma.ui.reminder.factory.RemindersViewModelFactory
 import java.util.Calendar
 
-class AddReminderBottomSheet(val popularNames: List<DrugView>) : BottomSheetDialogFragment() {
+class AddReminderBottomSheet : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_add_reminder, container, false)
     }
+
     private var selectedDrug: DrugView? = null
+    private lateinit var popularDrugsViewModel: PopularDrugsViewModel
+    private lateinit var remindersViewModel: RemindersViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val context = requireContext() as MainActivity
-        val databaseHelper = context.getDatabaseHelper()
+        initViewModels()
 
-        val reminderDao = databaseHelper.getReminderDao()!!
-        val drugDao = databaseHelper.getDrugDao()!!
-
-        val viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return RemindersViewModel(reminderDao) as T
-            }
-        })[RemindersViewModel::class.java]
         val autoCompleteTextView: AutoCompleteTextView =
             view.findViewById(R.id.autoCompleteTextView)
         autoCompleteTextView.threshold = 2
 
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.dropdown_multiline_item,
-            R.id.includedLineView,
-            popularNames
-        )
-        autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
-            selectedDrug = parent.adapter.getItem(position) as DrugView
+
+
+        popularDrugsViewModel.popularDrugs.observe(viewLifecycleOwner) { drugs ->
+            val adapter = ArrayAdapter(
+                requireContext(),
+                R.layout.dropdown_multiline_item,
+                R.id.includedLineView,
+                popularDrugsViewModel.popularDrugs.value ?: mutableListOf<DrugView>()
+
+            )
+            autoCompleteTextView.setAdapter(adapter)
         }
-        autoCompleteTextView.setAdapter(adapter)
+
+        autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
+            selectedDrug = parent.adapter.getItem(position) as? DrugView
+        }
 
         val datePicker: DatePicker = view.findViewById(R.id.datePicker)
         val addButton: Button = view.findViewById(R.id.button)
@@ -62,14 +63,28 @@ class AddReminderBottomSheet(val popularNames: List<DrugView>) : BottomSheetDial
                 set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
             }.time
 
-            val reminder = Reminder()
-            reminder.date = date
-            reminder.drug = drugDao.queryForId(selectedDrug!!.id)
-            viewModel.addReminder(reminder)
+            val reminder = Reminder().apply {
+                this.date = date
+                this.drug = selectedDrug?.id?.let { popularDrugsViewModel.getDrugById(it) }
+            }
+            remindersViewModel.addReminder(reminder)
 
             dismiss()
         }
+    }
 
+    private fun initViewModels() {
+        val context = requireActivity() as? MainActivity ?: return
+        val databaseHelper = context.getDatabaseHelper()
+        val drugViewFactory = PopularDrugsViewModelFactory(databaseHelper.getDrugDao()!!)
+        val reminderViewFactory = RemindersViewModelFactory(databaseHelper.getReminderDao()!!)
+
+        popularDrugsViewModel =
+            ViewModelProvider(requireActivity(), drugViewFactory)[PopularDrugsViewModel::class.java]
+        remindersViewModel = ViewModelProvider(
+            requireActivity(),
+            reminderViewFactory
+        )[RemindersViewModel::class.java]
     }
 }
 

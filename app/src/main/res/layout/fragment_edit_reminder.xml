@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/creamy">
+
+    <AutoCompleteTextView
+        android:id="@+id/editAutoCompleteTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:hint="@string/enter_description"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <DatePicker
+        android:id="@+id/editDatePicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.MaterialComponents.Light.Dialog.Alert"
+        app:layout_constraintEnd_toEndOf="@id/editAutoCompleteTextView"
+        app:layout_constraintStart_toStartOf="@id/editAutoCompleteTextView"
+        app:layout_constraintTop_toBottomOf="@+id/editAutoCompleteTextView" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="@id/editDatePicker"
+        app:layout_constraintStart_toStartOf="@id/editDatePicker"
+        app:layout_constraintTop_toBottomOf="@+id/editDatePicker" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/delete"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@id/saveButton"
+        app:layout_constraintStart_toStartOf="@id/saveButton"
+        app:layout_constraintTop_toBottomOf="@+id/saveButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

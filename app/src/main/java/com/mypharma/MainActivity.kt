@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: IDatabaseHelper
     private lateinit var binding: ActivityMainBinding
+
     companion object {
         private const val TAG = "MainActivity"
     }
@@ -27,8 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbHelper = DatabaseHelper(this@MainActivity)
-        var popularNames = dbHelper.getDrugDao()!!.queryForAll().map {
-            DrugView(it.id ,it.popularName, it.entityResponsible, it.substance)
+        dbHelper.getDrugDao()!!.queryForAll().map {
+            DrugView(it.id, it.popularName, it.entityResponsible, it.substance)
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.navigation_add_reminders -> {
-                        val bottomSheet = AddReminderBottomSheet(popularNames)
+                        val bottomSheet = AddReminderBottomSheet()
                         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
                         true
                     }
@@ -61,10 +62,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    fun setDatabaseHelper(helper: IDatabaseHelper) {
-        this.dbHelper = helper
     }
 
     fun getDatabaseHelper(): IDatabaseHelper {

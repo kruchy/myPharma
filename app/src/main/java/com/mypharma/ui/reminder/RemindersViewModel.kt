@@ -21,16 +21,26 @@ class RemindersViewModel(private val reminderDao: Dao<Reminder, Long>) : ViewMod
         _reminders.postValue(getAllReminders())
     }
 
-    suspend fun getReminderById(id: Long): Reminder? {
+    fun getReminderById(id: Long): Reminder? {
         return reminderDao.queryForId(id)
     }
 
-    private suspend fun getAllReminders(): MutableList<Reminder> {
+    private  fun getAllReminders(): MutableList<Reminder> {
         return reminderDao.queryForAll()
     }
 
     fun addReminder(reminder: Reminder) = viewModelScope.launch {
         reminderDao.create(reminder)
+        _reminders.postValue(getAllReminders())
+    }
+
+    fun updateReminder(reminder: Reminder) = viewModelScope.launch {
+        reminderDao.update(reminder)
+        _reminders.postValue(getAllReminders())
+    }
+
+    fun deleteReminder(reminder: Long) = viewModelScope.launch {
+        reminderDao.deleteById(reminder)
         _reminders.postValue(getAllReminders())
     }
 }

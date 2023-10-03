@@ -16,4 +16,12 @@
         android:name="com.mypharma.ui.notifications.CalendarFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_calendar" />
+
+    <fragment
+        android:id="@+id/editReminderFragment"
+        android:name="com.mypharma.ui.reminder.EditReminderFragment">
+        <argument
+            android:name="reminderId"
+            app:argType="long" />
+    </fragment>
 </navigation>
